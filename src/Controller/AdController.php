@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
+use App\Form\AnnonceType;
 use App\Repository\AdRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,6 +20,23 @@ class AdController extends AbstractController
         ]);
     }
 
+
+   /**
+     * Permet d'ajouter une annonce à la bdd 
+     *
+     * @return Response
+     */
+    #[Route("/ads/new", name:"ads_create")]
+    public function create(): Response
+    {
+        $ad = new Ad();
+        $form = $this->createForm(AnnonceType::class,$ad);
+
+        return $this->render("ad/new.html.twig",[
+            'form' => $form->createView()
+        ]);
+
+    }
     #[Route("/ads/{slug}", name:"ads_show")]
     public function show(string $slug, Ad $ad): Response
     {
