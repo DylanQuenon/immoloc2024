@@ -3,7 +3,7 @@
 
 {% block title %}Création d'une annonce
 {% endblock %}
-{% form_theme myForm _self %}
+{# {% form_theme myForm 'bootstrap_5_layout.html.twig' %} #}
 {% block body %}
 	<div class="container">
 		<h1>Création d'une nouvelle annonce</h1>
@@ -35,6 +35,3 @@
 	</div>
 {% endblock %}
 
-{% block text_widget %}
-	<input type="text" name="{{full_name}}" id="{{id}}" class="form-control">
-{% endblock %}
