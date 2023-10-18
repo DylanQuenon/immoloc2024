@@ -70,7 +70,13 @@ class AccountController extends AbstractController
 
         if($form->isSubmitted()&& $form->isValid())
         {
+
             //gestion de l'insertion dans la bdd
+            $hash=$hasher->hashPassword($user,$user->getPassword());
+            $user->setPassword($hash);
+
+            $manager->persist($user);
+            $manager->flush();
 
             return $this->redirectToRoute('account_login');
         }
