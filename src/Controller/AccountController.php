@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Exception\TooManyLoginAttemptsAuthenticationException;
 
 class AccountController extends AbstractController
 {
@@ -20,9 +21,18 @@ class AccountController extends AbstractController
     {
         $error=$utils->getLastAuthenticationError();
         $username=$utils->getLastUsername();
+
+        $loginError=null;
+
+        if($error instanceof TooManyLoginAttemptsAuthenticationException)
+        {
+            $loginError="Trop de tentatives de connexion. Réssayez plus tard";
+        }
+
         return $this->render('account/index.html.twig', [
            'hasError'=>$error !== null,
-           'username'=>$username
+           'username'=>$username,
+           'loginError'=>$loginError
         ]);
     }
 
