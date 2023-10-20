@@ -51,7 +51,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Asset\Url(message:"Veuillez donner une URL valide pour votre avatar")]
+    #[Asset\Image(mimeTypes:['image/png','image/jpeg', 'image/jpg','image/gif'], mimeTypesMessage:"Vous devez upload un fichier jpg, jpeg,png ou gif")]
+    #[Asset\File(maxSize:"1024k",MaxSizeMessage:"La taille du fichier est trop grande")]
     private ?string $picture = null;
 
     #[ORM\Column(length: 255)]
