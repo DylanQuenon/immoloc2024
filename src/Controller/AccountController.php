@@ -123,7 +123,7 @@ class AccountController extends AbstractController
         $user=$this->getUser();//permet de récup l'utilisateur connecté
 
         $fileName=$user->getPicture();
-        if(!empty($filename)){
+        if(!empty($fileName)){
             $user->setPicture(
                 new File($this->getParameter('uploads_directory').'/'.$user->getPicture())
             );
@@ -135,7 +135,7 @@ class AccountController extends AbstractController
         {
 
             $user->setSlug('')
-                ->setPicture($filename);
+                ->setPicture($fileName);
             $manager->persist($user);
             $manager->flush();
 
