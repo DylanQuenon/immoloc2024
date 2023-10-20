@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Form\ApplicationType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class PasswordUpdateType extends ApplicationType
 {
@@ -16,6 +17,7 @@ class PasswordUpdateType extends ApplicationType
             ->add('confirmPassword',PasswordType::class,$this->getConfiguration("Confirmation du mot de passe","Confirmez votre mot de passe actuel"))
         ;
     }
+    
 
     public function configureOptions(OptionsResolver $resolver): void
     {
