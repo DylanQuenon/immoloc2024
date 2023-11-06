@@ -154,6 +154,7 @@ class AccountController extends AbstractController
                 'success',
                 "Les données ont été enregistrées avec succés"
             );
+            return $this->redirectToRoute('account_index');
         }
 
         return $this->render("account/profile.html.twig",[
