@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdController extends AbstractController
@@ -39,6 +40,7 @@ class AdController extends AbstractController
      * @return Response
      */
     #[Route("/ads/new", name:"ads_create")]
+    #[IsGranted('ROLE_USER')]
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
 
@@ -91,7 +93,13 @@ class AdController extends AbstractController
      * @return Response
      */
     #[Route("/ads/{slug}/edit", name:"ads_edit")]
+    #[IsGranted(
+        attribute:new Expression('(user === subject and is_granted("ROLE_USER")) or is_granted("ROLE_ADMIN")'),
+        subject:new Expression('args["ad"].getAuthor()'),//l'annonce
+        message:"Cette annonce ne peut pas être modifiée"
+    )]
     public function edit(Request $request, EntityManagerInterface $manager, Ad $ad): Response
+
     {
         $form = $this->createForm(AnnonceType::class, $ad);
         $form->handleRequest($request);
