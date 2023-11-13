@@ -20,9 +20,9 @@ class BookingType extends ApplicationType
             ->add('endDate', DateType::class, $this->getConfiguration("Date de départ du bien", "La date à laquelle vous comptez partir du bien réservé",[
                 "widget" => "single_text"
             ]))
-            ->add('comment', TextareaType::class, $this->getConfiguration(false, "Si vous avez un commentaire, n'hésitez pas à en faire part"),[
+            ->add('comment', TextareaType::class, $this->getConfiguration(false, "Si vous avez un commentaire, n'hésitez pas à en faire part",[
                 "required" => false
-            ])
+            ]))
         ;
     }
 

@@ -5,8 +5,10 @@ namespace App\Entity;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Booking
 {
     #[ORM\Id]
@@ -23,9 +25,11 @@ class Booking
     private ?Ad $ad = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\GreaterThan("today", message:"La date d'arrivée doit être ultérieurs à la date d'aujourd'hui")]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\GreaterThan(propertyPath:"startDate", message:"La date de départ doit être plus éloignée que la date d'arrivée")]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -36,6 +40,83 @@ class Booking
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function prePersist(): void
+    {
+        if(empty($this->createdAt))
+        {
+            $this->createdAt = new \DateTime();
+        }
+        if(empty($this->amount))
+        {
+            // prix de l'annonce * nombre de jour
+            $this->amount = $this->ad->getPrice() * $this->getDuration();
+        }
+    }
+
+    /**
+     * Permet de récupérer le nombre de jour d'une reservation
+     *
+     * @return integer|null
+     */
+    public function getDuration(): ?int 
+    {
+        // la méthode diff des objets datetime fait la différence entre 2 date et renvoie un objet de type DateInterval
+        $diff = $this->endDate->diff($this->startDate);
+        // recup un objet de type DateInterval et pour recup le jour
+        return $diff->days;
+    }
+
+    /**
+     * Permet de vérifier si les dates sont réservables
+     *
+     * @return boolean|null
+     */
+    public function isBookableDates(): ?bool
+    {
+        // connaitres les date impossible pour l'annonce
+        $notAvailableDays = $this->ad->getNotAvailableDays();
+        // comparer les dates choisies avec les dates impossible
+        $bookingDays = $this->getDays();
+
+        // transformation des objets dateTime en tableau de chaines de caractères pour les journées (facilite la comparaison)
+        $days = array_map(function($day){
+            return $day->format('Y-m-d');
+        },$bookingDays);
+
+        $notAvailable = array_map(function($day){
+            return $day->format('Y-m-d');
+        },$notAvailableDays);
+
+        foreach($days as $day){
+            if(array_search($day, $notAvailable) !== false) return false;
+        }
+
+
+        return true;
+
+    }
+
+    /**
+     * Permet de récupérer un tableau des journées qui correspondent à ma réservation
+     *
+     * @return array|null Un tableau d'objets DateTime représentant les jours de la réservation
+     */
+    public function getDays(): ?array
+    {
+        $resultat = range(
+            $this->startDate->getTimestamp(),
+            $this->endDate->getTimestamp(),
+            24*60*60
+        );
+        $days = array_map(function($dayTimestamp){
+            return new \DateTime(date('Y-m-d',$dayTimestamp));
+        },$resultat);
+
+        return $days;
+    }
 
     public function getId(): ?int
     {

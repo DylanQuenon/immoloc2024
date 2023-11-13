@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AdRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields:['title'],message:"Une autre annonce possède déjà ce titre, merci de le modifier")]
+#[UniqueEntity(fields:['title'], message:"Une autre annonce possède déjà ce titre, merci de le modifier")]
 class Ad
 {
     #[ORM\Id]
@@ -22,7 +22,7 @@ class Ad
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Length(min:10,max:255,minMessage: "Le titre doit faire plus de 10 caractères",maxMessage:"Le titre ne doit pas faire plus de 255 caractères")]
+    #[Assert\Length(min: 10, max: 255, minMessage:"Le titre doit faire plus de 10 caractères", maxMessage: "Le titre ne doit pas faire plus de 255 caractères")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -32,15 +32,15 @@ class Ad
     private ?float $price = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\Length(min:10,max:255,minMessage: "L'introduction doit faire plus de 10 caractères",maxMessage:"L'introduction ne doit pas faire plus de 250 caractères")]
+    #[Assert\Length(min: 20, max: 255, minMessage:"L'introduction doit faire plus de 20 caractères", maxMessage: "L'introduction ne doit pas faire plus de 255 caractères")]
     private ?string $introduction = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\Length(min:100,minMessage:"Votre description doit faire plus de 100 caractères")]
+    #[Assert\Length(min: 100, minMessage:'Votre description doit faire plus de 100 caractères')]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Url(message:"Il faut une URL valide")]
+    #[Assert\Url(message: "Il faut une URL valide")]
     private ?string $coverImage = null;
 
     #[ORM\Column]
@@ -77,6 +77,29 @@ class Ad
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title);
         }
+    }
+
+    /**
+     * Permet d'obtenir un tableau des jours qui ne sont pas disponible pour cette annonce
+     *
+     * @return array|null Un tableau d'objets DateTime représentant les jours d'occupation
+     */
+    public function getNotAvailableDays(): ?array
+    {
+        $notAvailableDays = [];
+        foreach($this->bookings as $booking){
+            // calculer les jours oqui se trouvent entre la date d'arrivée et de départ
+            // la fonction range() de php permet de créer un tableau qui contient chaque étape existante entre deux nombre
+            // $result = range(10,20,2)
+            // reponse = [10,12,14,16,18,20]
+            $resultat = range($booking->getStartDate()->getTimestamp(),$booking->getEndDate()->getTimestamp(), 24*60*60);
+            //[23132123,123132123,123132132,132132132,32132123132]
+            $days = array_map(function($dayTimestamp){
+                return new \DateTime(date('Y-m-d',$dayTimestamp));
+            },$resultat);
+            $notAvailableDays = array_merge($notAvailableDays,$days);
+        }
+        return $notAvailableDays;
     }
 
     public function getId(): ?int
