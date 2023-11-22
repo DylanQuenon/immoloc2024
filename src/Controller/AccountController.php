@@ -299,4 +299,15 @@ class AccountController extends AbstractController
             'myForm' => $form->createView()
         ]);
     }
+    /**
+     * Permet d'afficher les informations de l'utilisateur
+     *
+     * @return Response
+     */
+    #[Route("/account/booking", name:"account_booking")]
+    #[IsGranted('ROLE_USER')]
+    public function bookings(): Response
+    {
+        return $this->render("account/bookings.html.twig");
+    }
 }
