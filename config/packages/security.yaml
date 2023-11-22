@@ -13,6 +13,19 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin:
+            pattern: ^/admin
+            provider: app_user_provider
+            form_login:
+                default_target_path: admin_ads_index
+                login_path: admin_account_login
+                check_path: admin_account_login
+            logout:
+                path: admin_account_logout
+                target: homepage
+            login_throttling:
+                max_attempts: 3          # per minute ...
+                interval: '15 minutes'  
         main:
             lazy: true
             provider: app_user_provider
@@ -22,10 +35,11 @@ security:
             logout:
                 path: account_logout
                 target: account_login
+            
             # configure the maximum login attempts
             login_throttling:
                 max_attempts: 3          # per minute ...
-                # interval: '15 minutes' # ... or in a custom period
+                interval: '15 minutes' # ... or in a custom period
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -36,7 +50,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+         - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
