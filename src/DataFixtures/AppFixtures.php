@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\User;
 use App\Entity\Image;
 use App\Entity\Booking;
+use App\Entity\Comment;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -121,6 +122,16 @@ class AppFixtures extends Fixture
 
 
                 $manager->persist($booking);
+
+                //gestion des commentaires
+                $comment=new Comment();
+                $comment->SetContent($faker->paragraph())
+                        ->setRating(rand(1,5))
+                        ->setAuthor($booker)
+                        ->setAd($ad);
+
+                        $manager->persist($comment);
+                    
 
             }
 
