@@ -1,0 +1,23 @@
+{% extends "admin/base.html.twig" %}
+
+{% block title %}Modification de {{user.fullName}}{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="my-1">Modification de l'utilisateur
+			{{user.fullName}}</h1>
+		<a href="{{path('admin_users_index')}}" class="btn btn-secondary my-3">Retour aux utilisateurs</a>
+
+		<div class="bg-light p-3 my-3">
+		
+			
+			{{form_start(myForm)}}
+			{{form_widget(myForm)}}
+			<button type="submit" class="btn btn-primary">
+				<i class="fas fa-check"></i>
+				Modifier l'utilisateur</button>
+			{{form_end(myForm)}}
+		</div>
+	</div>
+
+{% endblock %}
