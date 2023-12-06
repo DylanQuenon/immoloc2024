@@ -25,16 +25,12 @@
                         <td>{{booking.booker.fullName}}</td>
                         <td>{{booking.ad.title}}</td>
                         <td>{{booking.duration}}</td>
-                        <td>{{booking.amount | number_format(2, '.', ',')}}€</td>
-						<td class="text-center">
-							<a href="{{ path('admin_bookings_edit', {'id': booking.id}) }}" class="btn btn-warning">
-								<i class="fas fa-pen"></i>
-							</a>
-							<a href="{{ path('admin_bookings_delete', {'id': booking.id}) }}" class="btn btn-danger">
-								<i class="fas fa-trash"></i>
-							</a>
-						</td>
-					</tr>
+                        <td>{{booking.amount | number_format(2, ',', '.')}}€</td>
+                        <td class="text-center">
+                            <a href="{{path('admin_bookings_edit',{'id':booking.id})}}" class="btn btn-warning"><i class="fas fa-pen"></i></a>
+                            <a href="{{path('admin_bookings_delete',{'id':booking.id})}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
