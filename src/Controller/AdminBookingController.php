@@ -23,36 +23,41 @@ class AdminBookingController extends AbstractController
         ]);
     }
 
-      /**
-     * Permet d'éditer les réservations (pas déontologique)
+
+
+   /**
+     * Permet de modifier une réservation
      *
      * @param Booking $booking
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return Response
      */
+    #[Route("/admin/bookings/{id}/edit", name: "admin_bookings_edit")]
+    public function edit(Booking $booking, Request $request, EntityManagerInterface $manager): Response
+    {
+        $form = $this->createForm(AdminBookingType::class, $booking,[
+            'validation_groups' => ['Default']
+        ]);
+        $form->handleRequest($request);
 
-     #[Route("/admin/bookings/{id}/edit", name:"admin_bookings_edit")]
-     public function edit(Booking $booking, Request $request, EntityManagerInterface $manager): Response{
-        
-            $form = $this->createForm(AdminBookingType::class, $booking);$form->handleRequest($request);
-     
-             if($form->isSubmitted() && $form->isValid())
-             {
-                 $manager->persist($booking);
-                 $manager->flush();
-     
-                 $this->addFlash(
-                     'success',
-                     "La réservation n°".$booking->getId()." a été modifiée"
-                 );
-             }
-     
-             return $this->render("admin/booking/edit.html.twig",[
-                 'booking' => $booking,
-                 'myForm' => $form->createView()
-             ]);
-         }
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $booking->setAmount(0);
+
+            $manager->persist($booking);
+            $manager->flush();
+            $this->addFlash(
+                'success',
+                "La réservation n°<strong>".$booking->getId()."</strong> a bien été modifiée"
+            );
+        }
+
+        return $this->render("admin/booking/edit.html.twig",[
+            'booking' => $booking,
+            'myForm' => $form->createView()
+        ]);
+    }
      
          
           
