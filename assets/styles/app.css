@@ -51,3 +51,6 @@
 .rating i{
     color: goldenrod;
 }
+.container, .container-fluid{
+    margin-top: 20px;
+}
